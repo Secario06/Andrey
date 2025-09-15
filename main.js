@@ -36,13 +36,13 @@ phoneInput?.addEventListener('input', () => {
     applyPhoneMask(phoneInput);
 });
 
-openBtn.addEventListener('click', () => {
+openBtn?.addEventListener('click', () => {
     lastActive = document.activeElement;
     dlg.showModal();
     dlg.querySelector('input, select, textarea, button')?.focus();
 });
 
-closeBtn.addEventListener('click', () => {
+closeBtn?.addEventListener('click', () => {
     dlg.close('cancel');
 });
 
@@ -81,6 +81,47 @@ form?.addEventListener('submit', (e) => {
     form.reset();
 });
 
-dlg.addEventListener('close', () => {
+dlg?.addEventListener('close', () => {
     lastActive?.focus();
+});
+
+const themeToggle = document.getElementById('themeToggle');
+const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+
+const currentTheme = localStorage.getItem('theme') || 
+                    (prefersDarkScheme.matches ? 'dark' : 'light');
+
+if (currentTheme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    themeToggle.textContent = '☀️';
+} else {
+    document.documentElement.removeAttribute('data-theme');
+    themeToggle.textContent = '🌙';
+}
+
+themeToggle?.addEventListener('click', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    
+    if (currentTheme === 'dark') {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('theme', 'light');
+        themeToggle.textContent = '🌙';
+    } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+        themeToggle.textContent = '☀️';
+    }
+});
+
+
+prefersDarkScheme.addEventListener('change', (e) => {
+    if (!localStorage.getItem('theme')) {
+        if (e.matches) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeToggle.textContent = '☀️';
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+            themeToggle.textContent = '🌙';
+        }
+    }
 });
